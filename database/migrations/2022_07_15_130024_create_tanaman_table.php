@@ -1,10 +1,11 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTanamenTable extends Migration
+class CreateTanamanTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +14,12 @@ class CreateTanamenTable extends Migration
      */
     public function up()
     {
-        Schema::create('tanamen', function (Blueprint $table) {
+        Schema::create('tanaman', function (Blueprint $table) {
             $table->id();
+            $table->string('nama');
+            $table->bigInteger('jenis_tanaman_id');
+            $table->string('khasiat');
+            $table->integer('harga');
             $table->timestamps();
         });
     }

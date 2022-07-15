@@ -13,8 +13,12 @@ class CreateDetailPemesanansTable extends Migration
      */
     public function up()
     {
-        Schema::create('detail_pemesanans', function (Blueprint $table) {
+        Schema::create('detail_pemesanan', function (Blueprint $table) {
             $table->id();
+            $table->string('order_id');
+            $table->bigInteger('tanaman');
+            $table->integer('qty');
+            $table->integer('harga');
             $table->timestamps();
         });
     }

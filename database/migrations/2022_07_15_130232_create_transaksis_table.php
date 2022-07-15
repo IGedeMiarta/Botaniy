@@ -13,8 +13,13 @@ class CreateTransaksisTable extends Migration
      */
     public function up()
     {
-        Schema::create('transaksis', function (Blueprint $table) {
+        Schema::create('transaksi', function (Blueprint $table) {
             $table->id();
+            $table->date('tanggal');
+            $table->bigInteger('pegawai');
+            $table->string('pembeli');
+            $table->string('trx_id')->unique();
+            $table->integer('total_harga');
             $table->timestamps();
         });
     }
