@@ -15,6 +15,7 @@ class CreateJenisTanamanTable extends Migration
     {
         Schema::create('jenis_tanaman', function (Blueprint $table) {
             $table->id();
+            $table->string('gambar')->nullable();
             $table->string('nama');
             $table->string('detail');
             $table->timestamps();

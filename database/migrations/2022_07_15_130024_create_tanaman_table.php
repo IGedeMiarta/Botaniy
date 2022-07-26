@@ -16,6 +16,7 @@ class CreateTanamanTable extends Migration
     {
         Schema::create('tanaman', function (Blueprint $table) {
             $table->id();
+            $table->string('gambar')->nullable();
             $table->string('nama');
             $table->bigInteger('jenis_tanaman_id');
             $table->string('khasiat');

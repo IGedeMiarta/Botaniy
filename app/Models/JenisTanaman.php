@@ -10,4 +10,8 @@ class JenisTanaman extends Model
     use HasFactory;
     protected $table = 'jenis_tanaman';
     protected $guarded = ['id'];
+
+    public function tanaman(){
+        return $this->hasMany(Tanaman::class);
+    }
 }

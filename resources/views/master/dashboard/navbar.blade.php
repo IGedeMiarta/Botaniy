@@ -1,11 +1,18 @@
+    @push('style')
+        <style>
+            .txtLogo {
+                font-weight: bold;
+            }
+        </style>
+    @endpush
+
     <!-- Top Bar Start -->
     <div class="topbar">
 
         <div class="topbar-left	d-none d-lg-block">
-            <div class="text-center">
-                <a href="index.html" class="logo"><img src="{{ asset('') }}assets/images/logo.png" height="22"
-                        alt="logo"></a>
-            </div>
+            <a href="layout-1.html" class="navbar-brand me-5">
+                <img src="{{ asset('logo-dark.png') }}" class="logo-light" alt="" height="52" />
+            </a>
         </div>
 
         <nav class="navbar-custom">
@@ -29,7 +36,8 @@
                         role="button" aria-haspopup="false" aria-expanded="false">
                         <img src="{{ asset('') }}assets/images/users/avatar-6.jpg" alt="user"
                             class="rounded-circle">
-                        <span class="d-none d-md-inline-block ml-1">David M. Bailey <i class="mdi mdi-chevron-down"></i>
+                        <span class="d-none d-md-inline-block ml-1">{{ auth()->user()->email }} <i
+                                class="mdi mdi-chevron-down"></i>
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated profile-dropdown">
@@ -37,8 +45,11 @@
                             Profile</a>
 
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"><i class="dripicons-exit text-muted"></i>
-                            Logout</a>
+                        <form action="{{ url('logout') }}" method="POST">
+                            @csrf
+                            <button class="dropdown-item" type="submit"><i class="dripicons-exit text-muted"></i>
+                                Logout</button>
+                        </form>
                     </div>
                 </li>
 

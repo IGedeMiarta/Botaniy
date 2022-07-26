@@ -32,8 +32,10 @@
                             Master Data </span> <span class="menu-arrow float-right"><i
                                 class="mdi mdi-chevron-right"></i></span></a>
                     <ul class="list-unstyled">
-                        <li><a href="tables-basic.html">Basic Tables</a></li>
-                        <li><a href="tables-datatable.html">Data Table</a></li>
+                        <li><a href="{{ url('') }}">User</a></li>
+                        <li><a href="{{ url('tanaman') }}">Tanaman</a></li>
+                        <li><a href="{{ url('jenis-tanaman') }}">Jenis Tanaman</a></li>
+                        <li><a href="{{ url('pegawai') }}">Pegawai</a></li>
                     </ul>
                 </li>
 

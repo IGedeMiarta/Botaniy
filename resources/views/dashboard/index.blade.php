@@ -1,4 +1,3 @@
-{{-- @include('master.dashboard.master') --}}
 @extends('master.dashboard.master')
 @section('content')
     <div class="row">
@@ -8,14 +7,14 @@
                     <div class="col-md-8">
                         <h4 class="page-title m-0">Dashboard</h4>
                     </div>
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <div class="float-right d-none d-md-block">
                             <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
                                 <i class="fa fa-plus mr-1"></i> Tambah
                             </button>
                         </div>
-                    </div>
+                    </div> --}}
                     <!-- end col -->
                 </div>
                 <!-- end row -->
