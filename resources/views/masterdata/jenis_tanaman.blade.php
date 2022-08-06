@@ -72,9 +72,10 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="updateTanaman">
+                    <form id="updateTanaman" action="" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
                         <input type="hidden" name="id" id="id">
-
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="preview-zone">
@@ -92,8 +93,7 @@
                                             <div class="box-body"></div>
                                         </div>
                                         <div class="edited-image d-flex justify-content-center">
-                                            <img src="{{ asset('files/images/1658306487.jpg') }}" alt="edited_images"
-                                                class="edit-img" style="max-width: 300px">
+                                            <img src="" alt="im" class="gambarShow" style="max-width: 300px">
                                         </div>
                                         <div class="box-tools pull-right">
                                             <button type="button" class="btn btn-danger btn-sm remove-preview d-none">
@@ -130,12 +130,12 @@
 
                             </div>
                         </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+                    <button type="submit" class="btn btn-primary" id="btnUpdate">Update</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -154,7 +154,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="insertTanaman" method="post" enctype="multipart/form-data">
+                    <form id="insertTanaman" method="post" enctype="multipart/form-data"
+                        action="{{ url('jenis-tanaman') }}">
+                        @csrf
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="preview-zone hidden">
@@ -207,12 +209,12 @@
 
                             </div>
                         </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -293,132 +295,82 @@
             reset(dropzone);
             $('.remove-preview').addClass('d-none');
             $('.edited-image').addClass('d-none');
-            $('.edit-img').addClass('d-none');
+            $('.gambarShow').addClass('d-none');
             $('#sts_bambar').val(1);
         });
     </script>
     <script>
         $(document).on('click', '.editBtn', function(e) {
             e.preventDefault();
+            $('.gambarShow').removeClass('d-none');
             $('.remove-preview').removeClass('d-none');
             $('#dropz').addClass('d-none');
-
             var id = $(this).data('id');
+            var url = `{{ url('jenis-tanaman/${id}') }}`
+            var img;
             $.ajax({
                 url: "{{ url('jenis-tanaman') }}" + '/' + id,
                 type: "GET",
                 success: function(rs) {
-                    console.log(rs);
+                    img = rs.data.gambar;
                     $('#id').val(rs.data.id);
                     $('#nama').val(rs.data.nama);
                     $('#detail').val(rs.data.detail);
                     $('#sts_bambar').val(0);
+                    $('.gambarShow').attr('src', `{{ asset('${img}') }}`);
+                    $('#updateTanaman').attr('action', url)
                 }
             })
         })
-        $('#btnUpdate').on('click', function(e) {
-            e.preventDefault();
-            clearInp();
-            var id = $('#id').val()
-            var files = $('#gambar')[0].files;
-            var nama = $('#nama').val();
-            var detail = $('#detail').val();
-            var status = $('#sts_bambar').val();
-            var form = new FormData();
-            // form.append('file', files[0]);
-            // form.append('nama', nama);
-            form.append('nama', 'test');
-            // form.append('detail', detail);
-            form.append('detail', 'detail');
-            // form.append('status', status);
-            form.append('status', 1);
-
-            console.log(form);
-            $.ajax({
-                url: "{{ url('jenis-tanaman') }}/" + id,
-                type: 'PUT',
-                data: form,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(rs) {
-                    console.log(rs);
-                    //     if (rs.status == 401) {
-                    //         $.each(rs.errors, function(key, val) {
-                    //             $('.err_' + key).addClass('is-invalid');
-                    //             $('.txt_' + key).html(val);
-                    //         })
-                    //     }
-                    //     if (rs.status == 201) {
-                    //         Toast.fire({
-                    //             icon: 'success',
-                    //             title: rs.msg
-                    //         })
-                    //         $('#modalAdd').modal('hide');
-
-                    //         setTimeout(function() {
-                    //             location.reload();
-                    //         }, 3300)
-                    //     }
-                    //     if (rs.status == 500) {
-                    //         Toast.fire({
-                    //             icon: 'error',
-                    //             title: rs.msg
-                    //         })
-                    //     }
-                }
 
 
-            })
-        })
+        // $('#btnSimpan').on('click', function(e) {
+        //     e.preventDefault();
+        //     clearInp();
+        //     var files = $('.gambar')[0].files;
+        //     var nama = $('.nama').val();
+        //     var detail = $('.detail').val();
+        //     var fd = new FormData();
+        //     fd.append('file', files[0]);
+        //     fd.append('nama', nama);
+        //     fd.append('detail', detail);
+        //     console.log(fd);
+        //     $.ajax({
+        //         url: "{{ url('jenis-tanaman') }}",
+        //         type: 'POST',
+        //         data: fd,
+        //         contentType: false,
+        //         processData: false,
+        //         dataType: 'json',
+        //         success: function(rs) {
+        //             console.log(rs);
+        //             if (rs.status == 401) {
+        //                 $.each(rs.errors, function(key, val) {
+        //                     $('.err_' + key).addClass('is-invalid');
+        //                     $('.txt_' + key).html(val);
+        //                 })
+        //             }
+        //             if (rs.status == 201) {
+        //                 Toast.fire({
+        //                     icon: 'success',
+        //                     title: rs.msg
+        //                 })
+        //                 $('#modalAdd').modal('hide');
 
-        $('#btnSimpan').on('click', function(e) {
-            e.preventDefault();
-            clearInp();
-            var files = $('.gambar')[0].files;
-            var nama = $('.nama').val();
-            var detail = $('.detail').val();
-            var fd = new FormData();
-            fd.append('file', files[0]);
-            fd.append('nama', nama);
-            fd.append('detail', detail);
-            console.log(fd);
-            $.ajax({
-                url: "{{ url('jenis-tanaman') }}",
-                type: 'POST',
-                data: fd,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(rs) {
-                    console.log(rs);
-                    if (rs.status == 401) {
-                        $.each(rs.errors, function(key, val) {
-                            $('.err_' + key).addClass('is-invalid');
-                            $('.txt_' + key).html(val);
-                        })
-                    }
-                    if (rs.status == 201) {
-                        Toast.fire({
-                            icon: 'success',
-                            title: rs.msg
-                        })
-                        $('#modalAdd').modal('hide');
+        //                 setTimeout(function() {
+        //                     location.reload();
+        //                 }, 3300)
+        //             }
+        //             if (rs.status == 500) {
+        //                 Toast.fire({
+        //                     icon: 'error',
+        //                     title: rs.msg
+        //                 })
+        //             }
+        //         }
 
-                        setTimeout(function() {
-                            location.reload();
-                        }, 3300)
-                    }
-                    if (rs.status == 500) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: rs.msg
-                        })
-                    }
-                }
-
-            })
-        })
+        //     })
+        // })
 
         $(document).on('click', '.deleteBtn', function(e) {
             e.preventDefault();
@@ -435,7 +387,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ url('tanaman') }}" + '/' + id,
+                        url: "{{ url('jenis-tanaman') }}" + '/' + id,
                         type: 'DELETE',
                         success: function(rs) {
                             console.log(rs);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tanaman;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,12 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        //
+        $data['title'] = 'Pembelian';
+        $data['tanaman'] = Tanaman::all();
+        return view('transaksi.pembelian',$data);
+    }
+    public function getTanaman(){
+        return response()->json(['data'=>Tanaman::all()],200);
     }
 
     /**

@@ -25,7 +25,7 @@ class AuthController extends Controller
             return redirect()->intended('/')->with('success','User Created');
 
         } catch (QueryException $e) {
-            return redirect()->back()->with('error','register failed');
+            return redirect()->back()->with('error','register failed '.$e->getMessage());
         }
 
 

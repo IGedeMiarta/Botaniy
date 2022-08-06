@@ -29,6 +29,7 @@
                 <thead>
                     <tr>
                         <th width="10px">No</th>
+                        <th>QR-Code</th>
                         <th>Gambar</th>
                         <th>Nama</th>
                         <th>Jenis</th>
@@ -41,6 +42,12 @@
                     @foreach ($tanaman as $t)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
+                            {{-- <td>{{ DNS2D::getBarcodeHTML('4445645656', 'QRCODE') }}</td> --}}
+                            <td>
+                                <div class="qr-code">
+                                    {!! DNS2D::getBarcodeHTML(url('/') . 'find/' . $t->slug, 'QRCODE', 4, 4) !!}
+                                </div>
+                            </td>
                             <td><img src="{{ asset($t->gambar) }}" alt="img-{{ $t->nama }}" style="max-width: 100px">
                             </td>
                             <td>{{ $t->nama }}</td>
@@ -76,8 +83,48 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="updateTanaman">
+                    <form id="updateTanaman" action="" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
                         <input type="hidden" name="id" id="id">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="preview-zone">
+                                    <div class="box box-solid">
+                                        <div class="box-header with-border">
+                                            <div><b>Gambar</b></div>
+                                        </div>
+                                        <div class="row" id="alert-info">
+                                            <div class="col-sm-11"><i
+                                                    class="fas fa-exclamation-triangle text-danger alert-icon d-none"></i>
+                                                <span class="text-center text-danger" id="alert"></span>
+                                            </div>
+                                        </div>
+                                        <div class="image-prev">
+                                            <div class="box-body"></div>
+                                        </div>
+                                        <div class="edited-image tampilanGmabar d-flex justify-content-center">
+                                            <img src="" alt="edited_images" class="gambarShow"
+                                                style="max-width: 300px">
+                                        </div>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-danger btn-sm remove-preview d-none">
+                                                <i class="fas fa-times me-2 "></i> Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="sts_gambar" id="sts_bambar">
+                                <div class="dropzone-wrapper dropz" id="dropz">
+                                    <div class="dropzone-desc">
+                                        <i class="glyphicon glyphicon-download-alt"></i>
+                                        <p>Klik / drag gambar disini</p>
+                                    </div>
+                                    <input type="file" name="gambar" class="dropzone gambar" id="gambar">
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label for="staticEmail" class="col-sm-2 col-form-label">Nama Tanaman</label>
                             <div class="col-sm-10">
@@ -114,12 +161,12 @@
                                 <span class="text-danger txt_harga"></span>
                             </div>
                         </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+                    <button type="submit" class="btn btn-primary" id="btnUpdate">Update</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -138,7 +185,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="insertTanaman" method="post" enctype="multipart/form-data">
+                    <form id="insertTanaman" method="post" enctype="multipart/form-data"
+                        action="{{ url('tanaman') }}">
+                        @csrf
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="preview-zone hidden">
@@ -165,7 +214,7 @@
                                 </div>
 
 
-                                <div class="dropzone-wrapper" id="dropz">
+                                <div class="dropzone-wrapper dropz" id="dropz">
                                     <div class="dropzone-desc">
                                         <i class="glyphicon glyphicon-download-alt"></i>
                                         <p>Klik / drag gambar disini</p>
@@ -210,12 +259,12 @@
                                 <span class="text-danger txt_harga"></span>
                             </div>
                         </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -250,8 +299,9 @@
                         boxZone.empty();
                         boxZone.append(htmlPreview);
                     };
-                    $('#dropz').addClass('d-none');
+                    $('.dropz').addClass('d-none');
                     $('.remove-preview').removeClass('d-none');
+
                     reader.readAsDataURL(input.files[0]);
                 }
             }
@@ -260,7 +310,7 @@
         function reset(e) {
             e.wrap('<form>').closest('form').get(0).reset();
             e.unwrap();
-            $('#dropz').removeClass('d-none');
+            $('.dropz').removeClass('d-none');
             $('.buttons').addClass('d-none');
 
 
@@ -294,115 +344,126 @@
             previewZone.addClass('hidden');
             reset(dropzone);
             $('.remove-preview').addClass('d-none');
-
+            $('.edited-image').addClass('d-none');
+            $('.gambarShow').addClass('d-none');
+            $('#sts_bambar').val(1);
         });
     </script>
     <script>
         $(document).on('click', '.editBtn', function(e) {
             e.preventDefault();
+            $('.gambarShow').removeClass('d-none');
+            $('.remove-preview').removeClass('d-none');
+            $('#dropz').addClass('d-none');
             var id = $(this).data('id');
+            var url = `{{ url('tanaman/${id}') }}`;
+            var img;
             $.ajax({
                 url: "{{ url('tanaman') }}" + '/' + id,
                 type: "GET",
                 success: function(rs) {
+                    img = rs.data.gambar;
                     $('#id').val(rs.data.id);
                     $('#nama').val(rs.data.nama);
                     $('#jenis_tanaman_id').val(rs.data.jenis_tanaman_id);
                     $('#khasiat').val(rs.data.khasiat);
                     $('#harga').val(rs.data.harga);
+                    $('#sts_bambar').val(0);
+                    $('.gambarShow').attr('src', `{{ asset('${img}') }}`);
+                    $('#updateTanaman').attr('action', url);
                 }
             })
         })
-        $('#btnUpdate').on('click', function(e) {
-            e.preventDefault();
-            clearInp();
-            var id = $('#id').val()
-            var data = $('#updateTanaman').serialize();
-            $.ajax({
-                url: "{{ url('tanaman') }}" + '/' + id,
-                type: 'PUT',
-                data: data,
-                success: function(rs) {
-                    console.log(rs);
-                    if (rs.status == 401) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: rs.msg
-                        })
-                    }
-                    if (rs.status == 201) {
-                        Toast.fire({
-                            icon: 'success',
-                            title: rs.msg
-                        })
-                        $('#modalEdt').modal('hide');
+        // $('#btnUpdate').on('click', function(e) {
+        //     e.preventDefault();
+        //     clearInp();
+        //     var id = $('#id').val()
+        //     var data = $('#updateTanaman').serialize();
+        //     $.ajax({
+        //         url: "{{ url('tanaman') }}" + '/' + id,
+        //         type: 'PUT',
+        //         data: data,
+        //         success: function(rs) {
+        //             console.log(rs);
+        //             if (rs.status == 401) {
+        //                 Toast.fire({
+        //                     icon: 'error',
+        //                     title: rs.msg
+        //                 })
+        //             }
+        //             if (rs.status == 201) {
+        //                 Toast.fire({
+        //                     icon: 'success',
+        //                     title: rs.msg
+        //                 })
+        //                 $('#modalEdt').modal('hide');
 
-                        setTimeout(function() {
-                            location.reload();
-                        }, 3300)
-                    }
-                    if (rs.status == 500) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: rs.msg
-                        })
-                    }
-                }
+        //                 setTimeout(function() {
+        //                     location.reload();
+        //                 }, 3300)
+        //             }
+        //             if (rs.status == 500) {
+        //                 Toast.fire({
+        //                     icon: 'error',
+        //                     title: rs.msg
+        //                 })
+        //             }
+        //         }
 
-            })
-        })
+        //     })
+        // })
 
-        $('#btnSimpan').on('click', function(e) {
-            e.preventDefault();
-            clearInp();
-            var files = $('.gambar')[0].files;
-            var nama = $('.nama').val();
-            var jenis = $('.jenis').val();
-            var khasiat = $('.khasiat').val();
-            var harga = $('.harga').val();
-            var fd = new FormData();
-            fd.append('file', files[0]);
-            fd.append('nama', nama);
-            fd.append('jenis_tanaman_id', jenis);
-            fd.append('harga', harga);
-            fd.append('khasiat', khasiat);
+        // $('#btnSimpan').on('click', function(e) {
+        //     e.preventDefault();
+        //     clearInp();
+        //     var files = $('.gambar')[0].files;
+        //     var nama = $('.nama').val();
+        //     var jenis = $('.jenis').val();
+        //     var khasiat = $('.khasiat').val();
+        //     var harga = $('.harga').val();
+        //     var fd = new FormData();
+        //     fd.append('file', files[0]);
+        //     fd.append('nama', nama);
+        //     fd.append('jenis_tanaman_id', jenis);
+        //     fd.append('harga', harga);
+        //     fd.append('khasiat', khasiat);
 
-            $.ajax({
-                url: "{{ url('tanaman') }}",
-                type: 'POST',
-                data: fd,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(rs) {
-                    console.log(rs);
-                    if (rs.status == 401) {
-                        $.each(rs.errors, function(key, val) {
-                            $('.err_' + key).addClass('is-invalid');
-                            $('.txt_' + key).html(val);
-                        })
-                    }
-                    if (rs.status == 201) {
-                        Toast.fire({
-                            icon: 'success',
-                            title: rs.msg
-                        })
-                        $('#modalAdd').modal('hide');
+        //     $.ajax({
+        //         url: "{{ url('tanaman') }}",
+        //         type: 'POST',
+        //         data: fd,
+        //         contentType: false,
+        //         processData: false,
+        //         dataType: 'json',
+        //         success: function(rs) {
+        //             console.log(rs);
+        //             if (rs.status == 401) {
+        //                 $.each(rs.errors, function(key, val) {
+        //                     $('.err_' + key).addClass('is-invalid');
+        //                     $('.txt_' + key).html(val);
+        //                 })
+        //             }
+        //             if (rs.status == 201) {
+        //                 Toast.fire({
+        //                     icon: 'success',
+        //                     title: rs.msg
+        //                 })
+        //                 $('#modalAdd').modal('hide');
 
-                        setTimeout(function() {
-                            location.reload();
-                        }, 3300)
-                    }
-                    if (rs.status == 500) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: rs.msg
-                        })
-                    }
-                }
+        //                 setTimeout(function() {
+        //                     location.reload();
+        //                 }, 3300)
+        //             }
+        //             if (rs.status == 500) {
+        //                 Toast.fire({
+        //                     icon: 'error',
+        //                     title: rs.msg
+        //                 })
+        //             }
+        //         }
 
-            })
-        })
+        //     })
+        // })
 
         $(document).on('click', '.deleteBtn', function(e) {
             e.preventDefault();

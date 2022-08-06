@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JenisTanaman;
 use App\Models\Pegawai;
 use App\Models\Tanaman;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +21,7 @@ class PegawaiController extends Controller
     {
         $data['title'] = 'Pegawai';
         $data['pegawai'] = Pegawai::all();
-        $data['jenis'] = JenisTanaman::all();
+        $data['users'] = User::all();
         return view('masterdata.pegawai',$data);
     }
 
@@ -42,21 +43,19 @@ class PegawaiController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'nama' => 'required',
-            'tmp_lahir' => 'required',
-            'tgl_lahir' => 'required',
-            'no_hp' => 'required|max:15'
-       ]);
+    //     $validator = $request->validate([
+    //         'user_id'=>'required',
+    //         'nama' => 'required',
+    //         'tmp_lahir' => 'required',
+    //         'tgl_lahir' => 'required',
+    //         'no_hp' => 'required|max:15'
+    //    ]);
        $request['status'] = true;
-       if($validator->fails()){
-            return response()->json(['status'=>401,'errors' => $validator->errors()]);
-       }
        try {
             Pegawai::create($request->all());
-            return response()->json(['status'=>201,'msg'=>'Created successfully']);
+            return redirect()->back()->with('success','Pegawai created');
        } catch (QueryException $e) {
-            return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
+            return redirect()->back()->with('error','error create pegawai');
        }
     }
 
@@ -98,16 +97,16 @@ class PegawaiController extends Controller
     public function update(Request $request, $id)
     {
         $data = Pegawai::find($id);
-       if($data){
-            try {
+        if($data){
+                try {
                     $data->update($request->all());
-                    return response()->json(['status'=>201,'msg'=>'Updated successfully']);
-            } catch (QueryException $e) {
-                    return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
-            }
-       }else{
-            return response()->json(['status'=>401,'msg'=>'Data not found']);
-       }
+                    return redirect()->back()->with('success','Pegawai Updated');
+                } catch (QueryException $e) {
+                    return redirect()->back()->with('error','update failed');
+                }
+        }else{
+            return redirect()->back()->with('error','data not found');
+        }
     }
 
     /**

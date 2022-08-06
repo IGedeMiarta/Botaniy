@@ -7,6 +7,7 @@ use App\Models\Tanaman;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class TanamanController extends Controller
 {
@@ -28,10 +29,7 @@ class TanamanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -42,35 +40,40 @@ class TanamanController extends Controller
     public function store(Request $request)
     {
        $validator = Validator::make($request->all(),[
-          'file'=>'required',
+          'gambar'=>'required',
           'nama' => 'required',
           'jenis_tanaman_id' => 'required',
           'khasiat' => 'required',
           'harga' => 'required|numeric'
        ]);
        if($validator->fails()){
-            return response()->json(['status'=>401,'errors' => $validator->errors()]);
+            // return response()->json(['status'=>401,'errors' => $validator->errors()]);
+            return redirect()->back()->with('error',$validator->errors());
+
        }
        try {
-          if($request->file('file')){
-               $file = $request->file('file');
-               $filename = time().".". $file->getClientOriginalExtension();
+            $file = $request->file('gambar');
+            $filename = time().".". $file->getClientOriginalExtension();
 
-               // upload location
-               $location = "files/images/";
+            // upload location
+            $location = "files/images/";
 
-               //upload file
-               $file->move($location,$filename);
+            //upload file
+            $file->move($location,$filename);
+            // file path
+            $filepath = $location.$filename;
+            Tanaman::create([
+                'slug' => Str::slug($request->nama,'-'),
+                'gambar'=>$filepath,
+                'nama'=>$request->nama,
+                'jenis_tanaman_id'=>$request->jenis_tanaman_id,
+                'khasiat'=>$request->khasiat,
+                'harga'=>$request->harga
+            ]);
 
-               // file path
-               $filepath = $location.$filename;
-               $request['gambar'] = $filepath;
-
-          }
-          Tanaman::create($request->all());
-          return response()->json(['status'=>201,'msg'=>'Created successfully']);
-       } catch (QueryException $e) {
-          return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
+            return redirect()->back()->with('success','Tanaman Created');
+        } catch (QueryException $e) {
+           return redirect()->back()->with('error','Tanaman Error');
        }
     }
 
@@ -111,13 +114,34 @@ class TanamanController extends Controller
      */
     public function update(Request $request,  $id)
     {
-       $data = Tanaman::find($id);
+        // dd($request->all());
+        $data = Tanaman::find($id);
+        $update = [
+            'nama'=>$request->nama,
+            'jenis_tanaman_id'=>$request->jenis_tanaman_id,
+            'khasiat' => $request->khasiat,
+            'harga'=>$request->harga
+        ];
        if($data){
             try {
-                    $data->update($request->all());
-                    return response()->json(['status'=>201,'msg'=>'Updated successfully']);
+                if($request->sts_gambar == 1){
+                    $file = $request->file('gambar');
+                    $filename = time().".". $file->getClientOriginalExtension();
+
+                    // upload location
+                    $location = "files/images/";
+
+                    //upload file
+                    $file->move($location,$filename);
+
+                    // file path
+                    $filepath = $location.$filename;
+                    $update['gambar'] = $filepath;
+                }
+                $data->update($update);
+               return redirect()->back()->with('success','Data updated');
             } catch (QueryException $e) {
-                    return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
+                return redirect()->back()->with('error','Error in update');
             }
        }else{
             return response()->json(['status'=>401,'msg'=>'Data not found']);
@@ -133,15 +157,15 @@ class TanamanController extends Controller
     public function destroy($id)
     {
         $data = Tanaman::find($id);
-       if($data){
-            try {
-                    $data->delete();
-                    return response()->json(['status'=>201,'msg'=>'Deleted successfully']);
-            } catch (QueryException $e) {
-                    return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
-            }
-       }else{
-            return response()->json(['status'=>401,'msg'=>'Data not found']);
-       }
+        if($data){
+                try {
+                        $data->delete();
+                        return response()->json(['status'=>201,'msg'=>'Deleted successfully']);
+                } catch (QueryException $e) {
+                        return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
+                }
+        }else{
+                return response()->json(['status'=>401,'msg'=>'Data not found']);
+        }
     }
 }

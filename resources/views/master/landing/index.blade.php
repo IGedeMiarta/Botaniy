@@ -25,8 +25,7 @@
 </head>
 
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="67">
-    <!-- start navbar -->
-    @include('master.landing.navbar')
+   
     <!-- end navbar -->
     @if (session()->has('success'))
         <div class="success-info" data-msg="{{ session('success') }}"></div>
@@ -34,36 +33,14 @@
     @if (session()->has('error'))
         <div class="error-info" data-msg="{{ session('error') }}"></div>
     @endif
-    <!-- start hero -->
-    @include('master.landing.hero')
-    <!-- end hero -->
-
-    <!-- start solution -->
-    @include('master.landing.jenis')
-    <!-- end solution -->
-
-
-    @include('master.landing.catalog')
+    
+    @yield('content')
 
     <!-- start footer -->
     @include('master.landing.footer')
     <!-- end footer -->
 
-    <!-- start footer alter -->
-    <div class="footer-alt bg-dark">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-lg-12">
-                    <script>
-                        document.write(new Date().getFullYear())
-                    </script> &copy; Stabig by <a href="" class="text-muted">Themesdesign</a>
-                </div>
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </div>
-    <!-- end footer alter -->
+    
 
 
     <!-- Modal -->

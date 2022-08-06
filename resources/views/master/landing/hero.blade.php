@@ -12,10 +12,10 @@
                 </h1>
                 <h5 class="my-4">& Boost Your Day</h5>
 
-                <p class="text-muted mb-2">Lorem ipsum dolor sit amet consectetur adipisicing elit <br> maxime vitae
-                    labore aliquam odit est illo ducimus, dolores neque expedita.</p>
-                <a href="#" class="btn btn-primary mt-4">Get Started <i data-feather="arrow-right"
-                        class="icon-xs icon"></i> </a>
+                <p class="text-muted mb-2">Back to nature, create a garden in your home and produce oxygen
+                    for the world</p>
+                <a href="#" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#exampleModal">Get
+                    Started <i data-feather="arrow-right" class="icon-xs icon"></i> </a>
             </div>
             <div class="col-lg-6 mt-lg-4 pt-2 mt-5">
                 <img class="hero-img" src="{{ asset('land') }}/images/hero-1-img.png" alt="">

@@ -41,18 +41,19 @@ class JenisTanamanController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(),[
-          'file'=>'required',
+          'gambar'=>'required',
           'nama' => 'required',
           'detail' => 'required',
        ]);
     //    dd($request->all());
        if($validator->fails()){
-            return response()->json(['status'=>401,'errors' => $validator->errors()]);
+            return redirect()->back()->with('error','Semua input wajib diisi');
        }
        try {
-          if($request->file('file')){
-               $file = $request->file('file');
+          if($request->file('gambar')){
+               $file = $request->file('gambar');
                $filename = time().".". $file->getClientOriginalExtension();
 
                // upload location
@@ -63,13 +64,15 @@ class JenisTanamanController extends Controller
 
                // file path
                $filepath = $location.$filename;
-               $request['gambar'] = $filepath;
+               $data['gambar'] = $filepath;
+               $data['nama'] = $request->nama;
+               $data['detail']= $request->detail;
 
           }
-          JenisTanaman::create($request->all());
-          return response()->json(['status'=>201,'msg'=>'Created successfully']);
+          JenisTanaman::create($data);
+          return redirect()->back()->with('success','Data berhasil ditambahakan');
        } catch (QueryException $e) {
-          return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
+            return redirect()->back()->with('error','Error! '.$e->getMessage());
        }
     }
 
@@ -110,7 +113,31 @@ class JenisTanamanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request->all());
+        $tanaman = JenisTanaman::find($id);
+        if($tanaman){
+            try {
+                if($request->sts_gambar == 1){
+                    $file = $request->file('gambar');
+                    $filename = time().".". $file->getClientOriginalExtension();
+
+                    // upload location 
+                    $location = "files/images/";
+
+                    //upload file
+                    $file->move($location,$filename);
+
+                    // file path
+                    $filepath = $location.$filename;
+                    $data['gambar'] = $filepath;
+                }
+                $data['nama'] = $request->nama;
+                $data['detail'] = $request->detail;
+                $tanaman->update($data);
+                return redirect()->back()->with('success','Data updated');
+            } catch (QueryException $e) {
+                return redirect()->back()->with('error','Error in update');
+            }
+        }
         // return response()->json(['data'=>$request->all()],200);
     }
 
@@ -122,6 +149,16 @@ class JenisTanamanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = JenisTanaman::find($id);
+        if($data){
+                try {
+                        $data->delete();
+                        return response()->json(['status'=>201,'msg'=>'Deleted successfully']);
+                } catch (QueryException $e) {
+                        return response()->json(['status'=>500,'msg'=>$e->errorInfo]);
+                }
+        }else{
+                return response()->json(['status'=>401,'msg'=>'Data not found']);
+        }
     }
 }

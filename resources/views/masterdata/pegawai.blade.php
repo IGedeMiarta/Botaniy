@@ -55,7 +55,7 @@
                                     <a href="#" class="btn btn-warning editBtn" data-toggle="modal"
                                         data-target="#modalEdt" data-id="{{ $t->id }}"><i
                                             class="fas fa-edit"></i></a>
-                                    <a href="#" class="btn btn-danger deleteBtn" data-id="{{ $t->id }}"><i
+                                    <a href="" class="btn btn-danger deleteBtn" data-id="{{ $t->id }}"><i
                                             class="fas fa-trash"></i></a>
                                 </div>
                             </td>
@@ -79,8 +79,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="updateTanaman">
+                    <form id="update" action="" method="POST">
+                        @csrf
+                        @method('PUT')
                         <input type="hidden" name="id" id="id">
+                        <div class="form-group row">
+                            <label for="staticEmail" class="col-sm-2 col-form-label">User</label>
+                            <div class="col-sm-10">
+                                <select name="user_id" id="user_id" class="custom-select">
+                                    <option selected disabled>--pilih</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->email }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label for="staticEmail" class="col-sm-2 col-form-label">Nama</label>
                             <div class="col-sm-10">
@@ -125,12 +138,12 @@
                                 <span class="text-danger txt_no_hp"></span>
                             </div>
                         </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+                    <button type="submit" class="btn btn-primary" id="btnUpdate">Update</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -149,7 +162,19 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="insertTanaman">
+                    <form id="insertTanaman" method="POST" action="{{ url('pegawai') }}">
+                        @csrf
+                        <div class="form-group row">
+                            <label for="staticEmail" class="col-sm-2 col-form-label">User</label>
+                            <div class="col-sm-10">
+                                <select name="user_id" id="" class="custom-select">
+                                    <option selected disabled>--pilih</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->email }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label for="staticEmail" class="col-sm-2 col-form-label">Nama</label>
                             <div class="col-sm-10">
@@ -183,111 +208,38 @@
                                 <span class="text-danger txt_no_hp"></span>
                             </div>
                         </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
 @endpush
+
 
 @push('script')
     <script>
         $(document).on('click', '.editBtn', function(e) {
             e.preventDefault();
             var id = $(this).data('id');
+            var url = "{{ url('pegawai') }}" + '/' + id;
             $.ajax({
-                url: "{{ url('pegawai') }}" + '/' + id,
+                url: url,
                 type: "GET",
                 success: function(rs) {
                     console.log(rs);
                     $('#id').val(rs.data.id);
+                    $('#user_id').val(rs.data.user_id);
                     $('#nama').val(rs.data.nama);
                     $('#tmp_lahir').val(rs.data.tmp_lahir);
                     $('#tgl_lahir').val(rs.data.tgl_lahir);
                     $('#no_hp').val(rs.data.no_hp);
                     $('#status').val(rs.data.status);
+                    $('#update').attr('action', url)
                 }
-            })
-        })
-        $('#btnUpdate').on('click', function(e) {
-            e.preventDefault();
-            clearInp();
-            var id = $('#id').val()
-            var data = $('#updateTanaman').serialize();
-            $.ajax({
-                url: "{{ url('pegawai') }}" + '/' + id,
-                type: 'PUT',
-                data: data,
-                success: function(rs) {
-                    console.log(rs);
-                    if (rs.status == 401) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: rs.msg
-                        })
-                    }
-                    if (rs.status == 201) {
-                        Toast.fire({
-                            icon: 'success',
-                            title: rs.msg
-                        })
-                        $('#modalEdt').modal('hide');
-
-                        setTimeout(function() {
-                            location.reload();
-                        }, 3300)
-                    }
-                    if (rs.status == 500) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: rs.msg
-                        })
-                    }
-                }
-
-            })
-        })
-
-        $('#btnSimpan').on('click', function(e) {
-            e.preventDefault();
-            clearInp();
-
-            var data = $('#insertTanaman').serialize();
-            $.ajax({
-                url: "{{ url('pegawai') }}",
-                type: 'POST',
-                data: data,
-                success: function(rs) {
-                    console.log(rs);
-                    if (rs.status == 401) {
-                        $.each(rs.errors, function(key, val) {
-                            $('.err_' + key).addClass('is-invalid');
-                            $('.txt_' + key).html(val);
-                        })
-                    }
-                    if (rs.status == 201) {
-                        Toast.fire({
-                            icon: 'success',
-                            title: rs.msg
-                        })
-                        $('#modalAdd').modal('hide');
-
-                        setTimeout(function() {
-                            location.reload();
-                        }, 3300)
-                    }
-                    if (rs.status == 500) {
-                        Toast.fire({
-                            icon: 'error',
-                            title: rs.msg
-                        })
-                    }
-                }
-
             })
         })
 

@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JenisTanamanController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\TanamanController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,17 +23,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [LandingController::class,'index']);
+Route::get('/find/{slug}',[LandingController::class,'getTanaman']);
+
 Route::post('/',[AuthController::class,'login'])->name('login');
 Route::post('/register',[AuthController::class,'register'])->name('register');
 
 Route::group(["middleware"=>"auth"],function(){
-
-    Route::get('/home',function(){
-        return view('dashboard.index',['title'=>'Dashboard']);
-    });
+    Route::get('/home',[DashboardController::class,'index']);
     Route::resource('/tanaman',TanamanController::class);
     Route::resource('/pegawai',PegawaiController::class);
     Route::resource('/jenis-tanaman',JenisTanamanController::class);
+    Route::resource('/pembelian', TransaksiController::class);
+    Route::get('get-all-tanman',[TransaksiController::class,'getTanaman']);
+    Route::get('laporan-tanaman',[LaporanController::class,'tanaman']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+

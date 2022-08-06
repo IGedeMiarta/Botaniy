@@ -175,6 +175,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Ladumor\LaravelPwa\PWAServiceProvider::class,
+        // Milon\Barcode\BarcodeServiceProvider::class,
     ],
 
     /*
@@ -230,7 +231,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'LaravelPwa' => \Ladumor\LaravelPwa\LaravelPwa::class,
-
+        // 'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        // 'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
     ],
 
 ];
