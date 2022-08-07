@@ -41,8 +41,7 @@
 
 
 
-{{-- 
-                <li class="has_sub">
+                {{-- <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-view-thumb"></i><span>
                             Transaksi </span> <span class="menu-arrow float-right"><i
                                 class="mdi mdi-chevron-right"></i></span></a>
@@ -60,8 +59,7 @@
                                 class="mdi mdi-chevron-right"></i></span></a>
                     <ul class="list-unstyled">
                         <li><a href="{{ url('laporan-tanaman') }}">Tanaman</a></li>
-                        <li><a href="#">Pembelian</a></li>
-                        <li><a href="#">Pemesanan</a></li>
+                        <li><a href="{{ url('laporan-pegawai') }}">Pegawai</a></li>
                     </ul>
                 </li>
 

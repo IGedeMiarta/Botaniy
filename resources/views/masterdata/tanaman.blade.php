@@ -42,12 +42,13 @@
                     @foreach ($tanaman as $t)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            {{-- <td>{{ DNS2D::getBarcodeHTML('4445645656', 'QRCODE') }}</td> --}}
-                            <td>
-                                <div class="qr-code">
-                                    {!! DNS2D::getBarcodeHTML(url('/') . 'find/' . $t->slug, 'QRCODE', 4, 4) !!}
-                                </div>
+                            <td>{!! DNS2D::getBarcodeSVG(url('/') . '/find/' . $t->slug, 'QRCODE', 4, 4) !!}
                             </td>
+                            {{-- <td>
+                                <div class="qr-code">
+                                    {!! DNS2D::getBarcodeHTML(url('/') . '/find/' . $t->slug, 'QRCODE', 4, 4) !!}
+                                </div>
+                            </td> --}}
                             <td><img src="{{ asset($t->gambar) }}" alt="img-{{ $t->nama }}" style="max-width: 100px">
                             </td>
                             <td>{{ $t->nama }}</td>

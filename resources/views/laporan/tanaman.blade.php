@@ -9,14 +9,14 @@
                     </div>
                     <div class="col-md-4">
                         <div class="float-right d-none d-md-block">
-                            <div class="btn-group btn-group-toggle text-center" data-toggle="buttons">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-qrcode mr-2"></i> QR-Code
-                                </button>
-                                <button class="btn btn-danger" type="button">
-                                    <i class="fas fa-file-pdf mr-2"></i> PDF
-                                </button>
-                            </div>
+                            {{-- <div class="btn-group btn-group-toggle text-center" data-toggle="buttons"> --}}
+
+                            <a href="{{ url('qr-cetak') }}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-qrcode mr-2"></i> QR-Code
+                            </a>
+                            <a href="{{ url('tanaman-cetak') }}" target="_blank" class="btn btn-danger">
+                                <i class="fas fa-file-pdf mr-2"></i> PDF
+                            </a>
                         </div>
                     </div>
                     <!-- end col -->

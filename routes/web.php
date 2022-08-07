@@ -36,6 +36,11 @@ Route::group(["middleware"=>"auth"],function(){
     Route::resource('/pembelian', TransaksiController::class);
     Route::get('get-all-tanman',[TransaksiController::class,'getTanaman']);
     Route::get('laporan-tanaman',[LaporanController::class,'tanaman']);
+    Route::get('tanaman-cetak',[LaporanController::class,'cetak_pdf']);
+    Route::get('qr-cetak',[LaporanController::class,'cetak_qr']);
+    Route::get('laporan-pegawai',[LaporanController::class,'pegawai']);
+    Route::get('pegawai-cetak',[LaporanController::class,'cetak_pegawai']);
+
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
