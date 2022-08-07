@@ -6,7 +6,9 @@
                      <img src="{{ asset('logo-dark.png') }}" alt="" height="50" />
                  </a>
                  <h6 class="mt-4 pt-2 text-white">Offline Store</h6>
-                 <p class="mt-3 text-muted fs-15">3964 White River Way behind <br> Salt Lake City, UT <br> 84106
+                 <p class="mt-3 text-muted fs-15">Jl. Raya Kangetan, Singapadu Kaler, <br> Kec. Sukawati, Kabupaten
+                     Gianyar, Bali 80571
+
                  </p>
                  <h6 class="text-primary fw-medium fs-15 mt-4">801-468-2313</h6>
                  <h6 class="text-primary fw-medium fs-15 mt-2">591-578-1234</h6>

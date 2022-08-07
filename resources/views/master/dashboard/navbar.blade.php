@@ -10,7 +10,7 @@
     <div class="topbar">
 
         <div class="topbar-left	d-none d-lg-block">
-            <a href="layout-1.html" class="navbar-brand me-5">
+            <a href="{{ url('/') }}" class="navbar-brand me-5">
                 <img src="{{ asset('logo-dark.png') }}" class="logo-light" alt="" height="52" />
             </a>
         </div>

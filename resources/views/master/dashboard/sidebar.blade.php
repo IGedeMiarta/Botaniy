@@ -7,8 +7,8 @@
     <div class="left-side-logo d-block d-lg-none">
         <div class="text-center">
 
-            <a href="{{ url('/') }}" class="logo"><img src="{{ asset('') }}assets/images/logo_dark.png"
-                    height="20" alt="logo"></a>
+            <a href="{{ url('/') }}" class="logo"><img src="{{ asset('logo-r.png') }}" height="20"
+                    alt="logo"></a>
         </div>
     </div>
 

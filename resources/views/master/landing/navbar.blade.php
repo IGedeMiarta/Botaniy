@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg fixed-top sticky" id="navbar">
     <div class="container">
-        <a href="layout-1.html" class="navbar-brand me-5">
+        <a href="{{ url('/') }}" class="navbar-brand me-5">
             <img src="{{ asset('logo-r.png') }}" class="logo-light" alt="" height="52" />
             <img src="{{ asset('logo-r.png') }}" class="logo-dark" alt="" height="52" />
         </a>
